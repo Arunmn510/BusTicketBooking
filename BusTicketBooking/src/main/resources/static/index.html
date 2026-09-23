@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BusGo - Bus Ticket Booking</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="#" class="logo" onclick="showSection('home'); return false;">
+        <div class="logo-icon">🚌</div>
+        <span>BusGo</span>
+      </a>
+      <ul class="nav-links">
+        <li class="active" data-target="home">Home</li>
+        <li data-target="results">Buses</li>
+        <li data-target="booking">Bookings</li>
+        <li data-target="admin">Admin</li>
+      </ul>
+      <div class="nav-actions">
+        <button class="btn btn-outline">Login</button>
+        <button class="btn btn-primary">Sign Up</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Home Section -->
+  <section id="home" class="section">
+    <div class="hero">
+      <div class="container hero-content">
+        <h1>Book Bus Tickets Anywhere</h1>
+        <p>Find affordable routes, compare prices, and travel comfortably</p>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="search-card">
+        <div class="search-grid">
+          <div class="form-group">
+            <label for="source">From</label>
+            <input type="text" id="source" placeholder="e.g. Chennai" value="Chennai">
+          </div>
+          <div class="form-group">
+            <label for="destination">To</label>
+            <input type="text" id="destination" placeholder="e.g. Bangalore" value="Bangalore">
+          </div>
+          <div class="form-group">
+            <label for="travelDate">Travel Date</label>
+            <input type="date" id="travelDate">
+          </div>
+          <button class="btn btn-primary search-btn" onclick="searchBuses()">Search Buses</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="popular-routes">
+        <h2 class="section-title">Popular Routes</h2>
+        <div class="route-chips">
+          <button class="chip" onclick="quickSearch('Chennai','Bangalore')">Chennai → Bangalore</button>
+          <button class="chip" onclick="quickSearch('Mumbai','Pune')">Mumbai → Pune</button>
+          <button class="chip" onclick="quickSearch('Delhi','Jaipur')">Delhi → Jaipur</button>
+          <button class="chip" onclick="quickSearch('Hyderabad','Chennai')">Hyderabad → Chennai</button>
+          <button class="chip" onclick="quickSearch('Kochi','Bangalore')">Kochi → Bangalore</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Results Section -->
+  <section id="results" class="section hidden">
+    <div class="container">
+      <div class="results-layout">
+        <aside class="filters">
+          <h3>Filters</h3>
+          <div class="filter-group">
+            <h4>Bus Type</h4>
+            <label class="checkbox"><input type="checkbox" checked> AC</label>
+            <label class="checkbox"><input type="checkbox"> Non-AC</label>
+            <label class="checkbox"><input type="checkbox" checked> Sleeper</label>
+            <label class="checkbox"><input type="checkbox"> Seater</label>
+          </div>
+          <div class="filter-group">
+            <h4>Departure Time</h4>
+            <label class="checkbox"><input type="checkbox"> Morning</label>
+            <label class="checkbox"><input type="checkbox" checked> Evening</label>
+            <label class="checkbox"><input type="checkbox"> Night</label>
+          </div>
+          <button class="btn btn-blue" style="width:100%">Apply Filters</button>
+        </aside>
+
+        <div class="results-main">
+          <div class="results-header">
+            <h2 id="resultsHeading">Buses Found</h2>
+            <select class="sort" id="sortSelect">
+              <option value="price">Price: Low to High</option>
+              <option value="departure">Departure: Early First</option>
+              <option value="rating">Rating: High to Low</option>
+            </select>
+          </div>
+          <div id="busResults">
+            <div class="empty-state">
+              <p>Search for buses to see available routes.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Booking Section -->
+  <section id="booking" class="section hidden">
+    <div class="container">
+      <div class="booking-layout">
+        <div class="summary-card">
+          <h3>Booking Summary</h3>
+          <div class="summary-row">
+            <span>Bus</span>
+            <strong id="summaryBusName">-</strong>
+          </div>
+          <div class="summary-row">
+            <span>Route</span>
+            <strong id="summaryRoute">-</strong>
+          </div>
+          <div class="summary-row">
+            <span>Departure</span>
+            <strong id="summaryTime">-</strong>
+          </div>
+          <div class="summary-row">
+            <span>Seat</span>
+            <strong id="summarySeat">-</strong>
+          </div>
+          <div class="summary-row">
+            <span>Base Fare</span>
+            <strong id="summaryFare">₹0</strong>
+          </div>
+          <div class="summary-row">
+            <span>Taxes & Fees</span>
+            <strong>₹0</strong>
+          </div>
+          <div class="summary-row total">
+            <span>Total</span>
+            <span id="summaryTotal">₹0</span>
+          </div>
+        </div>
+
+        <div class="booking-form">
+          <h3>Passenger Details</h3>
+          <form id="bookingForm" onsubmit="submitBooking(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="pName">Full Name *</label>
+                <input type="text" id="pName" required placeholder="Enter full name">
+              </div>
+              <div class="form-group">
+                <label for="pAge">Age *</label>
+                <input type="number" id="pAge" required placeholder="Age" min="1" max="120">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="pEmail">Email *</label>
+                <input type="email" id="pEmail" required placeholder="email@example.com">
+              </div>
+              <div class="form-group">
+                <label for="pPhone">Phone *</label>
+                <input type="tel" id="pPhone" required placeholder="+91 98765 43210">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Gender *</label>
+              <div class="radio-group">
+                <label class="radio"><input type="radio" name="gender" value="Male" required> Male</label>
+                <label class="radio"><input type="radio" name="gender" value="Female"> Female</label>
+                <label class="radio"><input type="radio" name="gender" value="Other"> Other</label>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%; padding:16px; margin-top:12px;">Confirm Booking</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Admin Section -->
+  <section id="admin" class="section hidden">
+    <div class="container">
+      <div class="admin-header">
+        <h2 class="section-title" style="margin:0">Admin Dashboard</h2>
+        <button class="btn btn-primary" onclick="alert('Add bus form would open here')">+ Add New Bus</button>
+      </div>
+      <div class="admin-tabs">
+        <div class="admin-tab active" data-admin="buses">Buses</div>
+        <div class="admin-tab" data-admin="passengers">Passengers</div>
+        <div class="admin-tab" data-admin="bookings">Bookings</div>
+        <div class="admin-tab" data-admin="routes">Routes</div>
+      </div>
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Bus No</th>
+              <th>Name</th>
+              <th>Route</th>
+              <th>Seats</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="adminBusTable">
+            <tr>
+              <td colspan="6" class="empty-cell">Loading buses...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© 2026 BusGo. Bus Ticket Booking System.</p>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
